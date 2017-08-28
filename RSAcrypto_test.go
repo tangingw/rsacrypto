@@ -20,12 +20,12 @@ func TestReadWriteGob(t *testing.T) {
 
 	bitLength := 3072
 
-	keyPair := generateRSAKey(bitLength)
+	keyPair := GenerateRSAKey(bitLength)
 
-	saveGobKey("rsa_key.key", keyPair)
-	saveGobKey("public.key", keyPair.PublicKey)
+	SaveGobKey("rsa_key.key", keyPair)
+	SaveGobKey("public.key", keyPair.PublicKey)
 
-	key := retrieveGobKey("public.key", &rsa.PublicKey{})
+	key := RetrieveGobKey("public.key", &rsa.PublicKey{})
 
 	if key.(*rsa.PublicKey).E != keyPair.PublicKey.E {
 
@@ -38,13 +38,13 @@ func TestCrypto(t *testing.T) {
 
 	bitLength := 3072
 
-	keypair := generateRSAKey(bitLength)
+	keypair := GenerateRSAKey(bitLength)
 
 	for _, msg := range testMsg {
 
 		byteMessage := []byte(msg)
-		encryptedMessage := keypair.encryptOAEP(sha256.New(), byteMessage, nil)
-		decryptedMessage := keypair.decryptOAEP(sha256.New(), encryptedMessage, nil)
+		encryptedMessage := keypair.EncryptOAEP(sha256.New(), byteMessage, nil)
+		decryptedMessage := keypair.DecryptOAEP(sha256.New(), encryptedMessage, nil)
 
 		if string(decryptedMessage) != msg {
 			t.Error("Expected %s, got %\n", msg, string(decryptedMessage))
@@ -56,10 +56,10 @@ func TestPublicPEM(t *testing.T) {
 
 	bitLength := 3072
 
-	keyPair := generateRSAKey(bitLength)
-	savePublicPEMKey("public.pem", keyPair.PublicKey)
+	keyPair := GenerateRSAKey(bitLength)
+	SavePublicPEMKey("public.pem", keyPair.PublicKey)
 
-	key := retrievePEMPubKey("public.pem")
+	key := RetrievePEMPubKey("public.pem")
 
 	if key.E != keyPair.PublicKey.E {
 
@@ -74,10 +74,10 @@ func TestPrivatePEM(t *testing.T) {
 
 	bitLength := 3072
 
-	keypair := generateRSAKey(bitLength)
-	savePEMKey("private.pem", keypair.PrivateKey)
+	keypair := GenerateRSAKey(bitLength)
+	SavePEMKey("private.pem", keypair.PrivateKey)
 
-	privateKey := retrievePEMKey("private.pem")
+	privateKey := RetrievePEMKey("private.pem")
 
 	if privateKey.PublicKey.E != keypair.PrivateKey.PublicKey.E {
 

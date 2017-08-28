@@ -20,7 +20,7 @@ type RSAKeyPair struct {
 	PrivateKey *rsa.PrivateKey //RSA Private Key
 }
 
-func generateRSAKey(bitSize int) RSAKeyPair {
+func GenerateRSAKey(bitSize int) RSAKeyPair {
 
 	key, keyErr := rsa.GenerateKey(rand.Reader, bitSize)
 
@@ -29,7 +29,7 @@ func generateRSAKey(bitSize int) RSAKeyPair {
 	return RSAKeyPair{&key.PublicKey, key}
 }
 
-func (r *RSAKeyPair) encryptOAEP(hash hash.Hash, plainMsg, label []byte) []byte {
+func (r *RSAKeyPair) EncryptOAEP(hash hash.Hash, plainMsg, label []byte) []byte {
 
 	ciphertext, cipherErr := rsa.EncryptOAEP(
 		hash,
@@ -44,7 +44,7 @@ func (r *RSAKeyPair) encryptOAEP(hash hash.Hash, plainMsg, label []byte) []byte 
 	return ciphertext
 }
 
-func (r *RSAKeyPair) decryptOAEP(hash hash.Hash, encryptedMsg, label []byte) []byte {
+func (r *RSAKeyPair) DecryptOAEP(hash hash.Hash, encryptedMsg, label []byte) []byte {
 
 	recoverMessage, recoverErr := rsa.DecryptOAEP(
 		hash,
@@ -59,7 +59,7 @@ func (r *RSAKeyPair) decryptOAEP(hash hash.Hash, encryptedMsg, label []byte) []b
 	return recoverMessage
 }
 
-func readFile(filename string) []byte {
+func ReadFile(filename string) []byte {
 
 	file, err := os.OpenFile(filename, os.O_RDONLY, 0400)
 
@@ -94,7 +94,7 @@ func readFile(filename string) []byte {
 Reference from:
 https://gist.github.com/sdorra/1c95de8cb80da31610d2ad767cd6f251
 **/
-func savePEMKey(fileName string, key *rsa.PrivateKey) {
+func SavePEMKey(fileName string, key *rsa.PrivateKey) {
 
 	outFile, outFileErr := os.Create(fileName)
 
@@ -112,9 +112,9 @@ func savePEMKey(fileName string, key *rsa.PrivateKey) {
 	checkErr(pemErr)
 }
 
-func retrievePEMKey(filename string) *rsa.PrivateKey {
+func RetrievePEMKey(filename string) *rsa.PrivateKey {
 
-	buf := readFile(filename)
+	buf := ReadFile(filename)
 	block, _ := pem.Decode(buf)
 
 	if block == nil || block.Type != "PRIVATE KEY" {
@@ -128,7 +128,7 @@ func retrievePEMKey(filename string) *rsa.PrivateKey {
 	return privateKey
 }
 
-func savePublicPEMKey(fileName string, pubkey *rsa.PublicKey) {
+func SavePublicPEMKey(fileName string, pubkey *rsa.PublicKey) {
 
 	asn1Bytes, bytesErr := asn1.Marshal(*pubkey)
 
@@ -150,9 +150,9 @@ func savePublicPEMKey(fileName string, pubkey *rsa.PublicKey) {
 	checkErr(encErr)
 }
 
-func retrievePEMPubKey(filename string) *rsa.PublicKey {
+func RetrievePEMPubKey(filename string) *rsa.PublicKey {
 
-	buf := readFile(filename)
+	buf := ReadFile(filename)
 
 	block, _ := pem.Decode(buf)
 
@@ -168,7 +168,7 @@ func retrievePEMPubKey(filename string) *rsa.PublicKey {
 	return publicKey
 }
 
-func saveGobKey(filename string, key interface{}) {
+func SaveGobKey(filename string, key interface{}) {
 
 	outputFile, outFileErr := os.Create(filename)
 
@@ -182,7 +182,7 @@ func saveGobKey(filename string, key interface{}) {
 	checkErr(encodeErr)
 }
 
-func retrieveGobKey(filename string, keyType interface{}) interface{} {
+func RetrieveGobKey(filename string, keyType interface{}) interface{} {
 
 	file, err := os.OpenFile(filename, os.O_RDONLY, 0400)
 
